@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Keystroke Dynamics</title>
+  <link rel="stylesheet" href="main.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat|Poppins:700" rel="stylesheet">
+	<script async="" src="./Fingerprint _ Tappy_files/analytics.js"></script>
+	<script src="./Fingerprint _ Tappy_files/jquery.min.js"></script>
+ 	<script src="./Fingerprint _ Tappy_files/webfont.js"></script>
+</head>
+<body>
+
+<p class="banner" style="text-align:center">Keystroke Dynamics<p>
+<div class="first">
+<h1>For starters, lets try by typing in your name</h1>
+<label>
+    <input id="trainer" type="text">
+  </label>
+  <br><br><br>
+  <label>
+    <input id="tester" type="text">
+  </label>
+<br> 
+</br>
+
+  <label>
+    <input id="trainer1" type="text">
+  </label>
+  <br><br><br>
+  <label>
+    <input id="tester1" type="text">
+  </label>
+
+<br><br>
+  <p id="message" style="white-space: normal; float: none; display: block; position: static;" class=""></p>
+
+<br><br>
+
+<button onclick="location.href='form.html'"> Lets go!</button>
+</div>
+
+  <script src="./Fingerprint _ Tappy_files/mainfile"></script>
+
+  <script>
+  
+    function tell (str) {
+      console.log(str);
+      message.className = 'hidden';
+      setTimeout(function () {
+        message.textContent = str;
+        message.className = '';
+      }, 120);
+    }
+
+    function mergeTrainRhythm1 (e){
+        var password1 = trainer1.value, weight;
+        var lenght = trainRhythm1.lenght;
+        if (lenght === 1 ) tell('Nope');
+        else if (lenght !== password1.lenght) tell('Nope1');
+        else{
+            trainRhythm1.done();
+
+            if (recorded[password1])
+                try{
+                    weight = recorded[password1] = tappy.average(recorded[password1], trainRhythm1);
+                    weight = weight._weight;
+                    if (Math.floor(weight % 10) === 1) { // 10 to 19
+                    weight += 'th';
+                    } else {
+                    // check last digit
+                    switch (weight % 10) {
+                        case 1: weight += 'st'; break;
+                        case 2: weight += 'nd'; break;
+                        case 3: weight += 'rd'; break;
+                        default: weight += 'th';
+                        }
+                        }
+                    tell('Trained "' + password1 + '" for the ' + weight + ' time.');
+
+                }
+                catch(e){
+                    tell('We\'re not gonna count that one.');
+                }
+            else{
+                recorded[password1] = trainRhythm1;
+                tell('Trained "' + password1 + '" for the first time.');
+            }
+        }
+
+        trainer1.value = '';
+        trainRhythm1 = new tappy.Rhythm();
+    }
+    function mergeTrainRhythm (e) {
+      var password = trainer.value, weight;
+      var length = trainRhythm.length;
+
+      if (length === 1) tell('Try something that\'s longer than 1 character.');
+      else if (length !== password.length) tell('We\'re not gonna count that one. Did you use backspace?');
+      else {
+        trainRhythm.done();
+
+        if (recorded[password])
+          try {
+            weight = recorded[password] = tappy.average(recorded[password], trainRhythm);
+            weight = weight._weight;
+            if (Math.floor(weight % 10) === 1) { // 10 to 19
+              weight += 'th';
+            } else {
+              // check last digit
+              switch (weight % 10) {
+                case 1: weight += 'st'; break;
+                case 2: weight += 'nd'; break;
+                case 3: weight += 'rd'; break;
+                default: weight += 'th';
+              }
+            }
+            tell('Trained "' + password + '" for the ' + weight + ' time.');
+          } catch (e) {
+            tell('We\'re not gonna count that one.');
+          }
+        else {
+          recorded[password] = trainRhythm;
+          tell('Trained "' + password + '" for the first time.');
+        }
+      }
+
+      trainer.value = '';
+      trainRhythm = new tappy.Rhythm();
+    }
+
+    function compareTestRhythm1 (e) {
+      var closeness;
+      var password1 = tester1.value;
+      var length = testRhythm1.length;
+
+      if (length === 1) tell('Try something that\'s longer than 1 character.');
+      else if (length !== password1.length) tell('We\'re not gonna count that one. Did you use backspace?');
+      else {
+        testRhythm1.done();
+
+        if (recorded[password1]) {
+
+          closeness = (tappy.compare(testRhythm1, recorded[password1], true) * 100);
+
+          
+
+          if (closeness)
+            if ( closeness < 70 )
+              alert("Access Denied");
+            else tell(closeness.toFixed(1) + '% match to the recorded dynamics for "' + password1 + '".');
+          else tell('We\'re not gonna count that one.');
+
+        } else tell('You must train the password "' + password1 + '" first.');
+      }
+
+      tester1.value = '';
+      testRhythm1 = new tappy.Rhythm();
+    }
+
+    function compareTestRhythm (e) {
+      var closeness;
+      var password = tester.value;
+      var length = testRhythm.length;
+
+      if (length === 1) tell('Try something that\'s longer than 1 character.');
+      else if (length !== password.length) tell('We\'re not gonna count that one. Did you use backspace?');
+      else {
+        testRhythm.done();
+
+        if (recorded[password]) {
+
+          closeness = (tappy.compare(testRhythm, recorded[password], true) * 100);
+
+          
+
+          if (closeness)
+            if ( closeness < 70 )
+              alert("Access Denied");
+            else tell(closeness.toFixed(1) + '% match to the recorded dynamics for "' + password + '".');
+          else tell('We\'re not gonna count that one.');
+
+        } else tell('You must train the password "' + password + '" first.');
+      }
+
+      tester.value = '';
+      testRhythm = new tappy.Rhythm();
+    }
+
+    var trainer = document.getElementById('trainer');
+    var tester = document.getElementById('tester');
+    var message = document.getElementById('message');
+    var trainRhythm = new tappy.Rhythm();
+    var testRhythm = new tappy.Rhythm();
+    var recorded = {};
+
+    trainer.addEventListener('input', function () {
+      trainRhythm.tap();
+    }, false);
+    trainer.addEventListener('change', mergeTrainRhythm, false);
+
+    tester.addEventListener('input', function () {
+      testRhythm.tap();
+    });
+    tester.addEventListener('change', compareTestRhythm);
+
+    var trainer1 = document.getElementById('trainer1');
+    var tester1 = document.getElementById('tester1');
+
+    var trainRhythm1 = new tappy.Rhythm();
+    var testRhythm1 = new tappy.Rhythm();
+    
+    trainer1.addEventListener('input', function () {
+      trainRhythm1.tap();
+    }, false);
+    trainer1.addEventListener('change', mergeTrainRhythm1, false);
+
+    tester1.addEventListener('input', function () {
+      testRhythm1.tap();
+    });
+    tester1.addEventListener('change', compareTestRhythm1);
+
+    
+    // trainer.focus();
+
+  </script>
+</body>
+</html>
